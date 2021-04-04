@@ -1,7 +1,8 @@
-# DS1307 Real Time Clock (RTC)
+# DS1307 Real Time Clock (RTC) Arduino Library
 A lightweight library driving the 1307 rtc chip, written in C++ for projects in the Arduino IDE.
 Since the DS1307 is a i2c device, the library uses the ``Wire.h`` library.<br>
 
+## Getting started
 To get started, you need to import both the ``Wire.h`` and the ``DS1307.h`` header file.
 ``` C++
 #include <Wire.h>
@@ -19,7 +20,7 @@ void setup() {
     rtc.init(); // initialize rtc
 }
 ```
-Setting the rtc's time:
+## Setting time and date
 ``` C++
 rtc.setYear(21); // 2021
 rtc.setMonth(4); // April
@@ -34,7 +35,7 @@ Or, alternatively:
 date_t newdate = {21, 4, 3, 15, 30, 27};
 rtc.setDate(&newdate);
 ```
-Getting time from the rtc:
+## Reading time and date
 ``` C++
 byte second = rtc.getSecond();
 byte minute = rtc.getMinute();
