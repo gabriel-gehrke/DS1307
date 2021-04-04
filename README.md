@@ -3,7 +3,7 @@ A lightweight library driving the 1307 rtc chip, written in C++ for projects in 
 Since the DS1307 is a i2c device, the library uses the ``Wire.h`` library.<br>
 
 ### Getting Started
-To get started, you need to import both the ``Wire.h`` and the ``DS1307.h`` header file.
+To get started, you need to import both the ``Wire.h`` and the ``DS1307.h`` header files.
 ``` C++
 #include <Wire.h>
 #include <DS1307.h>
@@ -74,5 +74,10 @@ int daysBetweenDates(date_t* d1, date_t* d2) {
     // casting to signed integer type, because toDays() returns unsigned integer type
     return (int)d2->toDays() - (int)d1->toDays();
 }
-
 ```
+
+## Future Plans
+In the future, this library might support:
+* Timer/Alarm setup
+* The AT24C32 EEPROM
+* Further methods for working with dates
