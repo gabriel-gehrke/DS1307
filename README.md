@@ -34,3 +34,21 @@ Or, alternatively:
 date_t newdate = {21, 4, 3, 15, 30, 27};
 rtc.setDate(&newdate);
 ```
+Getting time from the rtc:
+``` C++
+byte second = rtc.getSecond();
+byte minute = rtc.getMinute();
+byte hour = rtc.getHour();
+byte day = rtc.getDay();
+byte month = rtc.getMonth();
+byte year = rtc.getYear();
+```
+Or, alternatively:
+``` C++
+date_t d; // date struct
+rtc.getDate(&d); // updates values of the date struct pointed towards
+
+byte s = d.second;
+byte m = d.minute;
+// ...
+```
