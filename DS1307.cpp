@@ -5,14 +5,13 @@
 #include "DS1307.h"
 
 // registers
-const byte SECOND = 0;
-const byte MINUTE = 1;
-const byte HOUR = 2;
-const byte DAY = 4;
-const byte MONTH = 5;
-const byte YEAR = 6;
-
-const byte LAST_4_MASK = 0b00001111;
+const byte SECOND_REG = 0;
+const byte MINUTE_REG = 1;
+const byte HOUR_REG = 2;
+const byte WEEKDAY_REG = 3; // unused for now
+const byte DAY_REG = 4;
+const byte MONTH_REG = 5;
+const byte YEAR_REG = 6;
 
 DS1307::DS1307(int rtc_addr, int mem_addr) {
   _rtc_addr = rtc_addr;
@@ -45,45 +44,33 @@ byte DS1307::_read(byte addr) {
 }
 
 byte DS1307::getSecond() {
-  byte b = _read(SECOND);
-  byte s = b & LAST_4_MASK; // ones (seconds)
-  byte t = (b & 0b01110000) >> 4; // tens (seconds, first bit is ch)
-  return (t * 10) + s;
+  return _fromTensFormat(_read(SECOND_REG), 0b01110000);
 }
 
 byte DS1307::getMinute() {
-  byte b = _read(MINUTE);
-  byte m = b & LAST_4_MASK; // ones (minutes)
-  byte t = (b & 0b01110000) >> 4; // tens (minutes, first is 0)
-  return (t * 10) + m;
+  return _fromTensFormat(_read(MINUTE_REG), 0b01110000);
 }
 
 byte DS1307::getHour() {
-  byte b = _read(HOUR);
-  byte h = b & LAST_4_MASK; // ones (hours)
-  byte t = (b & 0b00110000) >> 4; // tens (hours, first bit 0, second bit indicates 12/24 hour)
-  return (t * 10) + h;
+  return _fromTensFormat(_read(HOUR_REG), 0b00110000);
 }
 
 byte DS1307::getDay() {
-  byte b = _read(DAY);
-  byte d = b & LAST_4_MASK;
-  byte t = (b & 0b00110000) >> 4;
-  return (t * 10) + d;
+  return _fromTensFormat(_read(DAY_REG), 0b00110000);
 }
 
 byte DS1307::getMonth() {
-  byte b = _read(MONTH);
-  byte m = b & LAST_4_MASK;
-  byte t = (b & 0b00010000) >> 4;
-  return (t * 10) + m;
+  return _fromTensFormat(_read(MONTH_REG), 0b00010000);
 }
 
 byte DS1307::getYear() {
-  byte b = _read(YEAR);
-  byte y = b & LAST_4_MASK;
-  byte t = (b & 0b11110000) >> 4;
-  return (t * 10) + y;
+  return _fromTensFormat(_read(YEAR_REG), 0b11110000);
+}
+
+static byte DS1307::_fromTensFormat(byte b, byte mask) {
+  byte singles = b & 0b00001111;
+  byte tens = (b & mask) >> 4;
+  return (tens * 10) + singles;
 }
 
 void DS1307::getDate(date_t* d) {
@@ -95,13 +82,22 @@ void DS1307::getDate(date_t* d) {
   d->year = getYear();
 }
 
-void DS1307::setDate(date_t d) {
-  setSecond(d.second);
-  setMinute(d.minute);
-  setHour(d.hour);
-  setDay(d.day);
-  setMonth(d.month);
-  setYear(d.year);
+
+// WRITE CONFIG
+
+void DS1307::setDate(date_t* d) {
+  const size_t SET_WHOLE_LEN = 7;
+  byte data[SET_WHOLE_LEN];
+  
+  data[SECOND_REG] = _toTensFormat(d->second);
+  data[MINUTE_REG] = _toTensFormat(d->minute);
+  data[HOUR_REG] = _toTensFormat(d->hour);
+  data[WEEKDAY_REG] = 0x00;
+  data[DAY_REG] = _toTensFormat(d->day);
+  data[MONTH_REG] = _toTensFormat(d->month);
+  data[YEAR_REG] = _toTensFormat(d->year);
+
+  _write(SECOND_REG, data, SET_WHOLE_LEN);
 }
 
 static byte DS1307::_toTensFormat(byte b) {
@@ -110,30 +106,30 @@ static byte DS1307::_toTensFormat(byte b) {
 
 void DS1307::setSecond(byte s) {
   byte b = _toTensFormat(s);
-  _write(SECOND, &b, 1);
+  _write(SECOND_REG, &b, 1);
 }
 
 void DS1307::setMinute(byte m) {
   byte b = _toTensFormat(m);
-  _write(MINUTE, &b, 1);
+  _write(MINUTE_REG, &b, 1);
 }
 
 void DS1307::setHour(byte h) {
   byte b = _toTensFormat(h);
-  _write(HOUR, &b, 1);
+  _write(HOUR_REG, &b, 1);
 }
 
 void DS1307::setDay(byte d) {
   byte b = _toTensFormat(d);
-  _write(DAY, &b, 1);
+  _write(DAY_REG, &b, 1);
 }
 
 void DS1307::setMonth(byte m) {
   byte b = _toTensFormat(m);
-  _write(MONTH, &b, 1);
+  _write(MONTH_REG, &b, 1);
 }
 
 void DS1307::setYear(byte y) {
   byte b = _toTensFormat(y);
-  _write(YEAR, &b, 1);
+  _write(YEAR_REG, &b, 1);
 }
