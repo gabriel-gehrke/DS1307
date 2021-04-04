@@ -19,3 +19,18 @@ void setup() {
     rtc.init(); // initialize rtc
 }
 ```
+Setting the rtc's time:
+``` C++
+rtc.setYear(21); // 2021
+rtc.setMonth(4); // April
+rtc.setDay(3); // 3rd
+
+rtc.setHour(15); // 3pm, 24-hour format
+rtc.setMinute(30); // 30 minutes
+rtc.setSecond(27); // 27 seconds
+```
+Or, alternatively:
+``` C++
+date_t newdate = {21, 4, 3, 15, 30, 27};
+rtc.setDate(&newdate);
+```
