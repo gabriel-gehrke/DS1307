@@ -7,7 +7,7 @@ const uint32_t SECONDS_IN_MINUTE = 60;
 const uint32_t SECONDS_IN_HOUR = SECONDS_IN_MINUTE * 60;
 const uint32_t SECONDS_IN_DAY = SECONDS_IN_HOUR * 24;
 
-enum weekday : byte {
+enum Weekday : byte {
   Monday = 0,
   Tuesday = 1,
   Wednesday = 2,
@@ -18,7 +18,7 @@ enum weekday : byte {
 };
 
 // DATE STRUCT
-typedef struct date
+typedef struct Date
 {
   public:
     byte year;
@@ -28,7 +28,7 @@ typedef struct date
     byte minute;
     byte hour;
   
-    weekday getWeekday() {
+    Weekday getWeekday() {
       return (toDays() + Saturday) % 7; // 01.01.2001 was a Saturday
     } 
 
