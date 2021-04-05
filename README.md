@@ -1,5 +1,5 @@
 # DS1307 Real Time Clock (RTC) Arduino Library
-A lightweight library driving the 1307 rtc chip, written in C++ for projects in the Arduino IDE.
+A lightweight library driving the 1307 rtc chip, written in C++ for projects in the Arduino IDE.<br>
 Since the DS1307 is a i2c device, the library uses the ``Wire.h`` library.<br>
 
 ### Getting Started
@@ -20,6 +20,28 @@ void setup() {
     rtc.init(); // initialize rtc
 }
 ```
+
+## Date Type
+The ``date_t`` struct/type is the main datastructure you would want to work with. You can pass ``date_t*`` (pointers to date_t instances)
+to the rtc's ``getDate()`` and ``setDate()`` methods to capture all data coming from the rtc or to set the time and date in one flow.
+
+### Conversion Methods
+The ``date_t`` type also defines some handy methods for working with time and dates.
+``` C++
+date_t d;
+rtc.getDate(&d);
+
+uint32_t seconds = d.toSeconds() // seconds passed since millenium (year 00 at 00:00:00)
+uint32_t days = d.toDays() // days since millenium (year 00 at 00:00:00)
+```
+Allowing calculations like:
+``` C++
+int daysBetweenDates(date_t* d1, date_t* d2) {
+    // casting to signed integer type, because toDays() returns unsigned integer type
+    return (int)d2->toDays() - (int)d1->toDays();
+}
+```
+
 ### Setting Time and Date
 ``` C++
 rtc.setYear(21); // 2021
@@ -55,26 +77,7 @@ byte h = d.hour;
 // ...
 ```
 
-## Date Type
-The ``date_t`` struct/type is the main datastructure you would want to work with. You can pass ``date_t*`` (pointers to date_t instances)
-to the rtc's ``getDate()`` and ``setDate()`` methods to capture all data coming from the rtc or to set the time and date in one flow.
 
-### Conversion Methods
-The ``date_t`` type also defines some handy methods for working with time and dates.
-``` C++
-date_t d;
-rtc.getDate(&d);
-
-uint32_t seconds = d.toSeconds() // seconds passed since millenium (year 00 at 00:00:00)
-uint32_t days = d.toDays() // days since millenium (year 00 at 00:00:00)
-```
-Allowing calculations like:
-``` C++
-int daysBetweenDates(date_t* d1, date_t* d2) {
-    // casting to signed integer type, because toDays() returns unsigned integer type
-    return (int)d2->toDays() - (int)d1->toDays();
-}
-```
 
 ## Future Plans
 In the future, this library might support:
