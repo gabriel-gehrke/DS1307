@@ -33,7 +33,7 @@ to the rtc's ``getDate()`` and ``setDate()`` methods to capture all data coming 
 * ``second`` (0-59)
 
 All values are stored as bytes, which are unsigned 8-bit integers in the Arduino framework.<br>
-Therefore, a ``date_t`` instance will take up 7 bytes of memory.
+Therefore, a ``date_t`` instance will only take up 6 bytes of memory.
 
 
 ### Setting Time and Date
@@ -90,6 +90,11 @@ int daysBetweenDates(date_t* d1, date_t* d2) {
 }
 ```
 
+## Additional Features
+The DS1307 has 64 bytes of RAM, while only 8 bytes of them are actually used.
+Therefore, you can store up to 56 bytes of data on the DS1307's RAM.<br>
+Because the DS1307 is usually powered by the backup battery attached to it's board, the RAM won't erase after the Arduino's
+shutdown. This way you can save data between power cycles.
 
 ## Future Plans
 In the future, this library might support:
