@@ -24,9 +24,10 @@ typedef struct Date
     byte year;
     byte month;
     byte day;
-    byte second;
-    byte minute;
     byte hour;
+    byte minute;
+    byte second;
+    
   
     Weekday getWeekday() {
       return (toDays() + Saturday) % 7; // 01.01.2001 was a Saturday
@@ -87,12 +88,17 @@ class DS1307
     void setYear(byte y);
     void getDate(date_t* d);
     void setDate(date_t* d);
+
+    void writeToRam(byte addr, void* data, size_t data_size);
+    void readFromRam(byte addr, void* data, size_t data_size);
   private:
     int _rtc_addr;
     int _mem_addr;
     void _startOscillator();
     byte _read(byte addr);
-    void _write(byte addr, byte* dat, int len);
+    void _readSequential(byte addr, byte* buff, size_t len);
+    void _write(byte addr, byte dat);
+    void _writeSequential(byte addr, byte* dat, size_t len);
     static byte _toTensFormat(byte b);
     static byte _fromTensFormat(byte b, byte mask);
 };

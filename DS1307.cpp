@@ -13,6 +13,8 @@ const byte DAY_REG = 4;
 const byte MONTH_REG = 5;
 const byte YEAR_REG = 6;
 
+const byte RAM_REG = 8;
+
 DS1307::DS1307(int rtc_addr, int mem_addr) {
   _rtc_addr = rtc_addr;
   _mem_addr = mem_addr;
@@ -26,22 +28,38 @@ void DS1307::_startOscillator() {
   setSecond(getSecond()); // ensure oscillator bit is 0 (enabled)
 }
 
-void DS1307::_write(byte addr, byte* dat, int len) {
+/* I2C COMMUNICATION */
+
+void DS1307::_write(byte addr, byte dat) {
+  _writeSequential(addr, &dat, 1);
+}
+
+void DS1307::_writeSequential(byte addr, byte* dat, size_t len) {
   Wire.beginTransmission(_rtc_addr);
   Wire.write(addr);
-  for (int i = 0; i < len; i++) {
+  for (size_t i = 0; i < len; i++) {
     Wire.write(dat[i]);
   }
   Wire.endTransmission(true);
 }
 
 byte DS1307::_read(byte addr) {
+  byte b;
+  _readSequential(addr, &b, 1);
+  return b;
+}
+
+void DS1307::_readSequential(byte addr, byte* buff, size_t len) {
   Wire.beginTransmission(_rtc_addr);
   Wire.write(addr);
   Wire.endTransmission(false);
-  Wire.requestFrom(_rtc_addr, (size_t)1, true);
-  return Wire.read();
+  Wire.requestFrom(_rtc_addr, len, true);
+  for (size_t i = 0; i < len; i++) {
+    buff[i] = Wire.read();
+  }
 }
+
+/* ---------------------- */
 
 byte DS1307::getSecond() {
   return _fromTensFormat(_read(SECOND_REG), 0b01110000);
@@ -97,7 +115,7 @@ void DS1307::setDate(date_t* d) {
   data[MONTH_REG] = _toTensFormat(d->month);
   data[YEAR_REG] = _toTensFormat(d->year);
 
-  _write(SECOND_REG, data, SET_WHOLE_LEN);
+  _writeSequential(SECOND_REG, data, SET_WHOLE_LEN);
 }
 
 static byte DS1307::_toTensFormat(byte b) {
@@ -105,31 +123,35 @@ static byte DS1307::_toTensFormat(byte b) {
 }
 
 void DS1307::setSecond(byte s) {
-  byte b = _toTensFormat(s);
-  _write(SECOND_REG, &b, 1);
+  _write(SECOND_REG, _toTensFormat(s));
 }
 
 void DS1307::setMinute(byte m) {
-  byte b = _toTensFormat(m);
-  _write(MINUTE_REG, &b, 1);
+  _write(MINUTE_REG, _toTensFormat(m));
 }
 
 void DS1307::setHour(byte h) {
-  byte b = _toTensFormat(h);
-  _write(HOUR_REG, &b, 1);
+  _write(HOUR_REG, _toTensFormat(h));
 }
 
 void DS1307::setDay(byte d) {
-  byte b = _toTensFormat(d);
-  _write(DAY_REG, &b, 1);
+  _write(DAY_REG, _toTensFormat(d));
 }
 
 void DS1307::setMonth(byte m) {
-  byte b = _toTensFormat(m);
-  _write(MONTH_REG, &b, 1);
+  _write(MONTH_REG, _toTensFormat(m));
 }
 
 void DS1307::setYear(byte y) {
-  byte b = _toTensFormat(y);
-  _write(YEAR_REG, &b, 1);
+  _write(YEAR_REG, _toTensFormat(y));
+}
+
+// ACESS RAM
+
+void DS1307::writeToRam(byte addr, void* data, size_t data_size) {
+  _writeSequential(RAM_REG + addr, (byte*)data, data_size);
+}
+
+void DS1307::readFromRam(byte addr, void* buffer, size_t data_size) {
+  _readSequential(RAM_REG + addr, (byte*)buffer, data_size);
 }
