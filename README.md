@@ -1,5 +1,5 @@
 # DS1307 Real Time Clock (RTC) Arduino Library
-A lightweight library driving the 1307 rtc chip, written in C++ for projects in the Arduino IDE.<br>
+A lightweight library driving the DS1307 rtc chip, written in C++ for projects in the Arduino IDE.<br>
 Since the DS1307 is a i2c device, the library uses the ``Wire.h`` library.<br>
 
 ### Getting Started
