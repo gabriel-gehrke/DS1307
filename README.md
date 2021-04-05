@@ -96,6 +96,28 @@ Therefore, you can store up to 56 bytes of data on the DS1307's RAM.<br>
 Because the DS1307 is usually powered by the backup battery attached to it's board, the RAM won't erase after the Arduino's
 shutdown. This way you can save data between power cycles.
 
+#### Save Data to RAM
+```C++
+char* data = "This is a test"; // 15 bytes of data (14 chars + null-termination)
+rtc.writeToRam(
+    0, // address offset (0-57)
+    data, // pointer to data (as void* is expected, you can pass any pointer)
+    15 // number of bytes to write (1-58)
+);
+```
+
+#### Read Data from RAM
+```C++
+char buffer[100]; // buffer used to store the read data
+rtc.readFromRam(
+    0, // address offset (0-57)
+    buffer, // pointer to buffer (as void* is expected, you can pass any pointer)
+    15 // number of bytes to read (1-58)
+);
+Serial.println(buffer);
+// Output: "This is a test"
+```
+
 ## Future Plans
 In the future, this library might support:
 * Timer/Alarm setup
