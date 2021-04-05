@@ -35,22 +35,6 @@ to the rtc's ``getDate()`` and ``setDate()`` methods to capture all data coming 
 All values are stored as bytes, which are unsigned 8-bit integers in the Arduino framework.<br>
 Therefore, a ``date_t`` instance will only take up 6 bytes of memory.
 
-
-### Setting Time and Date
-``` C++
-rtc.setYear(21); // 2021
-rtc.setMonth(4); // April
-rtc.setDay(3); // 3rd
-
-rtc.setHour(15); // 3pm, 24-hour format
-rtc.setMinute(30); // 30 minutes
-rtc.setSecond(27); // 27 seconds
-```
-Or, alternatively:
-``` C++
-date_t newdate = {21, 4, 3, 15, 30, 27};
-rtc.setDate(&newdate);
-```
 ### Reading Time and Date
 ``` C++
 byte second = rtc.getSecond();
@@ -71,7 +55,21 @@ byte h = d.hour;
 // ...
 ```
 
+### Setting Time and Date
+``` C++
+rtc.setYear(21); // 2021
+rtc.setMonth(4); // April
+rtc.setDay(3); // 3rd
 
+rtc.setHour(15); // 3pm, 24-hour format
+rtc.setMinute(30); // 30 minutes
+rtc.setSecond(27); // 27 seconds
+```
+Or, alternatively:
+``` C++
+date_t newdate = {21, 4, 3, 15, 30, 27};
+rtc.setDate(&newdate);
+```
 
 ### Conversion Methods
 The ``date_t`` type also defines some handy methods for working with time and dates.
