@@ -23,24 +23,18 @@ void setup() {
 
 ## Date Type
 The ``date_t`` struct/type is the main datastructure you would want to work with. You can pass ``date_t*`` (pointers to date_t instances)
-to the rtc's ``getDate()`` and ``setDate()`` methods to capture all data coming from the rtc or to set the time and date in one flow.
+to the rtc's ``getDate()`` and ``setDate()`` methods to capture all data coming from the rtc or to set the time and date in one flow.<br>
+#### Variables contained in ``date_t`` type:
+* ``year`` (0-99)
+* ``month`` (1-12)
+* ``day`` (1-31)
+* ``hour`` (0-23)
+* ``minute`` (0-59)
+* ``second`` (0-59)
 
-### Conversion Methods
-The ``date_t`` type also defines some handy methods for working with time and dates.
-``` C++
-date_t d;
-rtc.getDate(&d);
+All values are stored as bytes, which are unsigned 8-bit integers in the Arduino framework.<br>
+Therefore, a ``date_t`` instance will take up 7 bytes of memory.
 
-uint32_t seconds = d.toSeconds() // seconds passed since millenium (year 00 at 00:00:00)
-uint32_t days = d.toDays() // days since millenium (year 00 at 00:00:00)
-```
-Allowing calculations like:
-``` C++
-int daysBetweenDates(date_t* d1, date_t* d2) {
-    // casting to signed integer type, because toDays() returns unsigned integer type
-    return (int)d2->toDays() - (int)d1->toDays();
-}
-```
 
 ### Setting Time and Date
 ``` C++
@@ -77,6 +71,24 @@ byte h = d.hour;
 // ...
 ```
 
+
+
+### Conversion Methods
+The ``date_t`` type also defines some handy methods for working with time and dates.
+``` C++
+date_t d;
+rtc.getDate(&d);
+
+uint32_t seconds = d.toSeconds() // seconds passed since millenium (year 00 at 00:00:00)
+uint32_t days = d.toDays() // days since millenium (year 00 at 00:00:00)
+```
+Allowing calculations like:
+``` C++
+int daysBetweenDates(date_t* d1, date_t* d2) {
+    // casting to signed integer type, because toDays() returns unsigned integer type
+    return (int)d2->toDays() - (int)d1->toDays();
+}
+```
 
 
 ## Future Plans
